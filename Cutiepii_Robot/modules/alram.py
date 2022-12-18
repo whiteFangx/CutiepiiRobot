@@ -120,12 +120,8 @@ async def _(event):
 async def tikclock():
     chats = alarms.find({})
     for c in chats:
-        #LOGGER.debug(c)
-        chat = c["chat"]
-        user = c["user"]
         time = c["time"]
         zone = c["zone"]
-        reason = c["reason"]
         present = dateparser.parse("now",
                                    settings={
                                        "TIMEZONE": f"{zone}",
@@ -138,6 +134,10 @@ async def tikclock():
         #print (zone)
         #LOGGER.debug(present>=ttime)
         if present > ttime:
+            #LOGGER.debug(c)
+            chat = c["chat"]
+            user = c["user"]
+            reason = c["reason"]
             await telethn.send_message(
                 chat,
                 f"**DING DONG**\n\n__This is an alarm set by__ {user} __for reason -__ `{reason}`"

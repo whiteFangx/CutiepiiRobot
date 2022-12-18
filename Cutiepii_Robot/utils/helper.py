@@ -168,7 +168,7 @@ async def return_json_senpai(query: str,
                              vars_: dict,
                              auth: bool = False,
                              user: int = None):
-    if auth is False:
+    if not auth:
         url = "https://graphql.anilist.co"
         return requests.post(url, json={
             "query": query,
@@ -176,13 +176,12 @@ async def return_json_senpai(query: str,
         }).json()
     else:
         headers = {
-            'Authorization':
-            'Bearer ' + str(
-                (await AUTH_USERS.find_one({"id": int(user)}))['token']),
-            'Content-Type':
-            'application/json',
-            'Accept':
-            'application/json',
+            'Authorization': (
+                'Bearer '
+                + str((await AUTH_USERS.find_one({"id": user}))['token'])
+            ),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         }
         url = "https://graphql.anilist.co"
         return requests.post(url,
@@ -209,8 +208,7 @@ def pos_no(no):
     x = ep_.pop()
     if ep_ != [] and ep_.pop() == '1':
         return 'th'
-    th = "st" if x == "1" else "nd" if x == "2" else "rd" if x == "3" else "th"
-    return th
+    return "st" if x == "1" else "nd" if x == "2" else "rd" if x == "3" else "th"
 
 
 def make_it_rw(time_stamp):
@@ -219,11 +217,13 @@ def make_it_rw(time_stamp):
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    tmp = (((str(days) + " Days, ") if days else "") +
-           ((str(hours) + " Hours, ") if hours else "") +
-           ((str(minutes) + " Minutes, ") if minutes else "") +
-           ((str(seconds) + " Seconds, ") if seconds else "") +
-           ((str(milliseconds) + " ms, ") if milliseconds else ""))
+    tmp = (
+        (f"{str(days)} Days, " if days else "")
+        + (f"{str(hours)} Hours, " if hours else "")
+        + (f"{str(minutes)} Minutes, " if minutes else "")
+        + (f"{str(seconds)} Seconds, " if seconds else "")
+        + (f"{str(milliseconds)} ms, " if milliseconds else "")
+    )
     return tmp[:-2]
 
 
@@ -243,33 +243,39 @@ def get_btns(media,
     qry = f"_{lsqry}" if lsqry is not None else ""
     pg = f"_{lspage}" if lspage is not None else ""
     if media == "ANIME" and sfw == "False":
-        buttons.append([
-            InlineKeyboardButton(
-                text="Characters",
-                callback_data=
-                f"char_{result[2][0]}_ANI{qry}{pg}_{str(auth)}_1_{user}"),
-            InlineKeyboardButton(
-                text="Description",
-                callback_data=
-                f"desc_{result[2][0]}_ANI{qry}{pg}_{str(auth)}_{user}"),
-            InlineKeyboardButton(
-                text="List Series",
-                callback_data=
-                f"ls_{result[2][0]}_ANI{qry}{pg}_{str(auth)}_{user}"),
-        ])
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="Characters",
+                    callback_data=f"char_{result[2][0]}_ANI{qry}{pg}_{auth}_1_{user}",
+                ),
+                InlineKeyboardButton(
+                    text="Description",
+                    callback_data=f"desc_{result[2][0]}_ANI{qry}{pg}_{auth}_{user}",
+                ),
+                InlineKeyboardButton(
+                    text="List Series",
+                    callback_data=f"ls_{result[2][0]}_ANI{qry}{pg}_{auth}_{user}",
+                ),
+            ]
+        )
     if media == "CHARACTER":
-        buttons.append([
-            InlineKeyboardButton(
-                "Description",
-                callback_data=
-                f"desc_{result[2][0]}_CHAR{qry}{pg}_{str(auth)}_{user}")
-        ])
-        buttons.append([
-            InlineKeyboardButton(
-                "List Series",
-                callback_data=f"lsc_{result[2][0]}{qry}{pg}_{str(auth)}_{user}"
+        buttons.extend(
+            (
+                [
+                    InlineKeyboardButton(
+                        "Description",
+                        callback_data=f"desc_{result[2][0]}_CHAR{qry}{pg}_{auth}_{user}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        "List Series",
+                        callback_data=f"lsc_{result[2][0]}{qry}{pg}_{auth}_{user}",
+                    )
+                ],
             )
-        ])
+        )
     if media == "SCHEDULED":
         if result[0] not in (0, 6):
             buttons.append([
@@ -296,7 +302,7 @@ def get_btns(media,
         buttons.append([InlineKeyboardButton("More Info", url=result[1][2])])
     if media == "AIRING" and sfw == "False":
         buttons.append([InlineKeyboardButton("More Info", url=result[1])])
-    if auth is True and media != "SCHEDULED" and sfw == "False":
+    if auth and media != "SCHEDULED" and sfw == "False":
         auth_btns = get_auth_btns(media,
                                   user,
                                   result[2],
@@ -306,53 +312,69 @@ def get_btns(media,
     if len(result) > 3:
         if result[3] == "None":
             if result[4] != "None":
-                buttons.append([
-                    InlineKeyboardButton(
-                        text="Sequel",
-                        callback_data=f"btn_{result[4]}_{str(auth)}_{user}")
-                ])
-        else:
-            if result[4] != "None":
-                buttons.append([
-                    InlineKeyboardButton(
-                        text="Prequel",
-                        callback_data=f"btn_{result[3]}_{str(auth)}_{user}"),
-                    InlineKeyboardButton(
-                        text="Sequel",
-                        callback_data=f"btn_{result[4]}_{str(auth)}_{user}"),
-                ])
-            else:
-                buttons.append([
+                buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text="Sequel",
+                            callback_data=f"btn_{result[4]}_{auth}_{user}",
+                        )
+                    ]
+                )
+        elif result[4] == "None":
+            buttons.append(
+                [
                     InlineKeyboardButton(
                         text="Prequel",
-                        callback_data=f"btn_{result[3]}_{str(auth)}_{user}")
-                ])
-    if lsqry is not None and len(result) != 1 and result[1][1] != 1:
-        if lspage == 1:
-            buttons.append([
-                InlineKeyboardButton(
-                    text="Next",
-                    callback_data=
-                    f"page_{media}{qry}_{int(lspage)+1}_{str(auth)}_{user}")
-            ])
-        elif lspage == result[1][1]:
-            buttons.append([
-                InlineKeyboardButton(
-                    text="Prev",
-                    callback_data=
-                    f"page_{media}{qry}_{int(lspage)-1}_{str(auth)}_{user}")
-            ])
+                        callback_data=f"btn_{result[3]}_{auth}_{user}",
+                    )
+                ]
+            )
         else:
-            buttons.append([
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text="Prequel",
+                        callback_data=f"btn_{result[3]}_{auth}_{user}",
+                    ),
+                    InlineKeyboardButton(
+                        text="Sequel",
+                        callback_data=f"btn_{result[4]}_{auth}_{user}",
+                    ),
+                ]
+            )
+    if lspage == 1:
+        if lsqry is not None and len(result) != 1 and result[1][1] != 1:
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text="Next",
+                        callback_data=f"page_{media}{qry}_{lspage + 1}_{auth}_{user}",
+                    )
+                ]
+            )
+    elif lspage == result[1][1]:
+        if lsqry is not None and len(result) != 1 and result[1][1] != 1:
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text="Prev",
+                        callback_data=f"page_{media}{qry}_{lspage - 1}_{auth}_{user}",
+                    )
+                ]
+            )
+    elif lsqry is not None and len(result) != 1 and result[1][1] != 1:
+        buttons.append(
+            [
                 InlineKeyboardButton(
                     text="Prev",
-                    callback_data=
-                    f"page_{media}{qry}_{int(lspage)-1}_{str(auth)}_{user}"),
+                    callback_data=f"page_{media}{qry}_{lspage - 1}_{auth}_{user}",
+                ),
                 InlineKeyboardButton(
                     text="Next",
-                    callback_data=
-                    f"page_{media}{qry}_{int(lspage)+1}_{str(auth)}_{user}"),
-            ])
+                    callback_data=f"page_{media}{qry}_{lspage + 1}_{auth}_{user}",
+                ),
+            ]
+        )
     return InlineKeyboardMarkup(buttons)
 
 
@@ -367,17 +389,24 @@ def get_auth_btns(media, user, data, lsqry: str = None, lspage: int = None):
                 if data[1] is not True else "Remove from Favs",
                 callback_data=f"fav_{media}_{data[0]}{qry}{pg}_{user}"))
     else:
-        btn.append(
-            InlineKeyboardButton(
-                text="Add to Favs"
-                if data[3] is not True else "Remove from Favs",
-                callback_data=f"fav_{media}_{data[0]}{qry}{pg}_{user}"))
-        btn.append(
-            InlineKeyboardButton(
-                text="Add to List" if data[1] is False else "Update in List",
-                callback_data=f"lsadd_{media}_{data[0]}{qry}{pg}_{user}"
-                if data[1] is False else
-                f"lsupdt_{media}_{data[0]}_{data[2]}{qry}{pg}_{user}"))
+        btn.extend(
+            (
+                InlineKeyboardButton(
+                    text="Add to Favs"
+                    if data[3] is not True
+                    else "Remove from Favs",
+                    callback_data=f"fav_{media}_{data[0]}{qry}{pg}_{user}",
+                ),
+                InlineKeyboardButton(
+                    text="Add to List"
+                    if data[1] is False
+                    else "Update in List",
+                    callback_data=f"lsadd_{media}_{data[0]}{qry}{pg}_{user}"
+                    if data[1] is False
+                    else f"lsupdt_{media}_{data[0]}_{data[2]}{qry}{pg}_{user}",
+                ),
+            )
+        )
     return btn
 
 
@@ -419,12 +448,11 @@ async def update_pics_cache(link):
     elif m != k['m']:
         await PIC_DB.drop()
         await PIC_DB.insert_one({'_id': 'month', 'm': m})
-    if (await PIC_DB.find_one({'_id': link})) is None:
-        await PIC_DB.insert_one({'_id': link})
-        try:
-            await pgram.send_message("webpagebot", link)
-        except ConnectionError:
-            await asyncio.sleep(5)
-            await pgram.send_message("webpagebot", link)
-    else:
+    if await PIC_DB.find_one({'_id': link}) is not None:
         return
+    await PIC_DB.insert_one({'_id': link})
+    try:
+        await pgram.send_message("webpagebot", link)
+    except ConnectionError:
+        await asyncio.sleep(5)
+        await pgram.send_message("webpagebot", link)

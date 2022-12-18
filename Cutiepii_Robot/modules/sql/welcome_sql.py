@@ -367,10 +367,7 @@ def set_human_checks(user_id, chat_id):
 def get_human_checks(user_id, chat_id):
     try:
         human_check = SESSION.query(WelcomeMuteUsers).get((user_id, str(chat_id)))
-        if not human_check:
-            return None
-        human_check = human_check.human_check
-        return human_check
+        return human_check.human_check if human_check else None
     finally:
         SESSION.close()
 
@@ -379,10 +376,7 @@ def get_welc_mutes_pref(chat_id):
     welcomemutes = SESSION.query(WelcomeMute).get(str(chat_id))
     SESSION.close()
 
-    if welcomemutes:
-        return welcomemutes.welcomemutes
-
-    return False
+    return welcomemutes.welcomemutes if welcomemutes else False
 
 
 def get_welc_pref(chat_id):
@@ -424,10 +418,7 @@ def get_clean_pref(chat_id):
     welc = SESSION.query(Welcome).get(str(chat_id))
     SESSION.close()
 
-    if welc:
-        return welc.clean_welcome
-
-    return False
+    return welc.clean_welcome if welc else False
 
 
 def set_welc_preference(chat_id, should_welcome):

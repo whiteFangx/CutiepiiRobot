@@ -706,11 +706,10 @@ async def reply_filter(update: Update,
 @loggable
 async def set_warn_limit(update: Update,
                          context: CallbackContext) -> str:
-    args = context.args
     chat: Optional[Chat] = update.effective_chat
-    user = update.effective_user
     msg: Optional[Message] = update.effective_message
-    if args:
+    if args := context.args:
+        user = update.effective_user
         if args[0].isdigit():
             if int(args[0]) < 3:
                 await msg.reply_text("The minimum warn limit is 3!")
@@ -734,12 +733,11 @@ async def set_warn_limit(update: Update,
 @user_admin_check(AdminPerms.CAN_CHANGE_INFO)
 async def set_warn_strength(update: Update,
                             context: CallbackContext) -> None:
-    args = context.args
     chat: Optional[Chat] = update.effective_chat
-    user: Optional[User] = update.effective_user
     msg: Optional[Message] = update.effective_message
 
-    if args:
+    if args := context.args:
+        user: Optional[User] = update.effective_user
         if args[0].lower() in ("on", "yes"):
             sql.set_warn_strength(chat.id, False)
             await msg.reply_text("Too many warns will now result in a Ban!")

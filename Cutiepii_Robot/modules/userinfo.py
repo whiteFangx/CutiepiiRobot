@@ -876,9 +876,6 @@ async def about_bio(update: Update,
 async def set_about_bio(update: Update,
                         context: CallbackContext) -> None:
     message = update.effective_message
-    sender_id = update.effective_user.id
-    bot = context.bot
-
     if update.effective_message.reply_to_message:
         repl_message = message.reply_to_message
         user_id = repl_message.from_user.id
@@ -889,9 +886,12 @@ async def set_about_bio(update: Update,
             )
             return
 
+        sender_id = update.effective_user.id
         if user_id in [777000, 1087968824] and sender_id not in DEV_USERS:
             await update.effective_message.reply_text("You are not authorised")
             return
+
+        bot = context.bot
 
         if user_id == bot.id and sender_id not in DEV_USERS:
             await message.reply_text(

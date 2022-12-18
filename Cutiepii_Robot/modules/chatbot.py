@@ -116,7 +116,6 @@ async def chatbot(update: Update, context: CallbackContext) -> None:
     msg = update.effective_message
     chat_id = update.effective_chat.id
     is_chat = chat_id in CHATBOT_ENABLED_CHATS
-    bot = context.bot
     if not is_chat:
         return
     if msg.text and not msg.document:
@@ -124,6 +123,7 @@ async def chatbot(update: Update, context: CallbackContext) -> None:
             return
         # lower the text to ensure text replace checks
         query = msg.text.lower()
+        bot = context.bot
         botname = bot.first_name.lower()
         if botname in query:
             query = query.replace(botname, "bot.name")

@@ -179,8 +179,7 @@ async def export_data(update: Update,
             time.localtime(checkchat.get("value")),
         )
         await update.effective_message.reply_text(
-            "You can only backup once a day!\nYou can backup again in about `{}`"
-            .format(timeformatt, ),
+            f"You can only backup once a day!\nYou can backup again in about `{timeformatt}`",
             parse_mode=ParseMode.MARKDOWN,
         )
         return
@@ -197,59 +196,35 @@ async def export_data(update: Update,
     # Notes
     for note in note_list:
         count += 1
-        namacat += "{}<###splitter###>".format(note.name)
+        namacat += f"{note.name}<###splitter###>"
         if note.msgtype == 1:
             tombol = sql.get_buttons(chat_id, note.name)
             for btn in tombol:
                 countbtn += 1
                 if btn.same_line:
-                    buttonlist.append(
-                        ("{}".format(btn.name), "{}".format(btn.url), True), )
+                    buttonlist.append((f"{btn.name}", f"{btn.url}", True))
                 else:
-                    buttonlist.append(
-                        ("{}".format(btn.name), "{}".format(btn.url), False), )
-            isicat += "###button###: {}<###button###>{}<###splitter###>".format(
-                note.value,
-                str(buttonlist),
-            )
+                    buttonlist.append((f"{btn.name}", f"{btn.url}", False))
+            isicat += f"###button###: {note.value}<###button###>{str(buttonlist)}<###splitter###>"
             buttonlist.clear()
         elif note.msgtype == 2:
-            isicat += "###sticker###:{}<###splitter###>".format(note.file)
+            isicat += f"###sticker###:{note.file}<###splitter###>"
         elif note.msgtype == 3:
-            isicat += "###file###:{}<###TYPESPLIT###>{}<###splitter###>".format(
-                note.file,
-                note.value,
-            )
+            isicat += f"###file###:{note.file}<###TYPESPLIT###>{note.value}<###splitter###>"
         elif note.msgtype == 4:
-            isicat += "###photo###:{}<###TYPESPLIT###>{}<###splitter###>".format(
-                note.file,
-                note.value,
-            )
+            isicat += f"###photo###:{note.file}<###TYPESPLIT###>{note.value}<###splitter###>"
         elif note.msgtype == 5:
-            isicat += "###audio###:{}<###TYPESPLIT###>{}<###splitter###>".format(
-                note.file,
-                note.value,
-            )
+            isicat += f"###audio###:{note.file}<###TYPESPLIT###>{note.value}<###splitter###>"
         elif note.msgtype == 6:
-            isicat += "###voice###:{}<###TYPESPLIT###>{}<###splitter###>".format(
-                note.file,
-                note.value,
-            )
+            isicat += f"###voice###:{note.file}<###TYPESPLIT###>{note.value}<###splitter###>"
         elif note.msgtype == 7:
-            isicat += "###video###:{}<###TYPESPLIT###>{}<###splitter###>".format(
-                note.file,
-                note.value,
-            )
+            isicat += f"###video###:{note.file}<###TYPESPLIT###>{note.value}<###splitter###>"
         elif note.msgtype == 8:
-            isicat += "###video_note###:{}<###TYPESPLIT###>{}<###splitter###>".format(
-                note.file,
-                note.value,
-            )
+            isicat += f"###video_note###:{note.file}<###TYPESPLIT###>{note.value}<###splitter###>"
         else:
-            isicat += "{}<###splitter###>".format(note.value)
+            isicat += f"{note.value}<###splitter###>"
     notes = {
-        "#{}".format(namacat.split("<###splitter###>")[x]):
-        "{}".format(isicat.split("<###splitter###>")[x], )
+        f'#{namacat.split("<###splitter###>")[x]}': f'{isicat.split("<###splitter###>")[x]}'
         for x in range(count)
     }
     # Rules
@@ -355,27 +330,20 @@ async def export_data(update: Update,
         },
     }
     baccinfo = json.dumps(backup, indent=4)
-    with open("Cutiepii_Robot{}Backup".format(chat_id), "w") as f:
+    with open(f"Cutiepii_Robot{chat_id}Backup", "w") as f:
         f.write(str(baccinfo))
     await context.bot.sendChatAction(current_chat_id, "upload_document")
     tgl = time.strftime("%H:%M:%S - %d/%m/%Y", time.localtime(time.time()))
     with contextlib.suppress(BadRequest):
         await context.bot.sendMessage(
             JOIN_LOGGER,
-            "*Successfully imported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`"
-            .format(
-                chat.title,
-                chat_id,
-                tgl,
-            ),
+            f"*Successfully imported backup:*\nChat: `{chat.title}`\nChat ID: `{chat_id}`\nOn: `{tgl}`",
             parse_mode=ParseMode.MARKDOWN,
         )
     await context.bot.sendDocument(
         current_chat_id,
-        document=open("Cutiepii_Robot{}Backup".format(chat_id), "rb"),
-        caption=
-        "*Successfully Exported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `Cutiepii-Robot-Backup` was specially made for notes."
-        .format(
+        document=open(f"Cutiepii_Robot{chat_id}Backup", "rb"),
+        caption="*Successfully Exported backup:*\nChat: `{}`\nChat ID: `{}`\nOn: `{}`\n\nNote: This `Cutiepii-Robot-Backup` was specially made for notes.".format(
             chat.title,
             chat_id,
             tgl,

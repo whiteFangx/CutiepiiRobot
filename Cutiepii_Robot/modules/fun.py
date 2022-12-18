@@ -443,11 +443,11 @@ async def weebify(update: Update, context: CallbackContext) -> None:
 
 async def gbun(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
-    chat = update.effective_chat
-
     if update.effective_message.chat.type == ChatType.PRIVATE:
         return
     if int(user.id) in SUDO_USERS or int(user.id) in SUPPORT_USERS:
+        chat = update.effective_chat
+
         await context.bot.sendMessage(chat.id,
                                       (random.choice(fun_strings.GBUN)))
 

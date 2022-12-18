@@ -51,9 +51,8 @@ def cannot_ban(banner_id, user_id, message) -> bool:
     if banner_id in DEV_USERS:
         if user_id not in DEV_USERS:
             return False
-        else:
-            message.reply_text("Why are you trying to ban another dev?")
-            return True
+        message.reply_text("Why are you trying to ban another dev?")
+        return True
     else:
         if user_id == OWNER_ID:
             message.reply_text("I'd never ban my owner.")
@@ -510,18 +509,11 @@ async def kickme(update: Update) -> Optional[str]:
             "Haha you're stuck with us here.")
         return ''
 
-    res = update.effective_chat.unban_member(
-        user_id)  # unban on current user = kick
-    if res:
+    if res := update.effective_chat.unban_member(user_id):
         await update.effective_message.reply_text(
             "*kicks you out of the group*")
 
-        log = (f"<b>{html.escape(chat.title)}:</b>\n"
-               f"#KICKED\n"
-               "self kick"
-               f"<b>User:</b> {mention_html(user.id, user.first_name)}\n")
-
-        return log
+        return f"<b>{html.escape(chat.title)}:</b>\n#KICKED\nself kick<b>User:</b> {mention_html(user.id, user.first_name)}\n"
     await update.effective_message.reply_text("Huh? I can't :/")
 
 
@@ -671,12 +663,7 @@ async def selfunban(update: Update,
     chat.unban_member(user.id)
     await message.reply_text("Yep, I have unbanned you.")
 
-    log = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#UNBANNED\n"
-        f"<b>User:</b> {mention_html(member.user.id, member.user.first_name)}")
-
-    return log
+    return f"<b>{html.escape(chat.title)}:</b>\n#UNBANNED\n<b>User:</b> {mention_html(member.user.id, member.user.first_name)}"
 
 
 
@@ -688,14 +675,13 @@ async def unbanb_btn(update: Update,
                      context: CallbackContext) -> str:
     bot = context.bot
     query = update.callback_query
-    chat = update.effective_chat
-    user = update.effective_user
     if query.data != "unbanb_del":
         splitter = query.data.split("=")
         query_match = splitter[0]
         if query_match == "unbanb_unban":
             user_id = splitter[1]
             log_message = ""
+            chat = update.effective_chat
             try:
                 member = await chat.get_member(user_id)
             except BadRequest:
@@ -704,6 +690,7 @@ async def unbanb_btn(update: Update,
             await query.message.edit_text(
                 f"{member.user.first_name} [{member.user.id}] Unbanned.")
             await bot.answer_callback_query(query.id, text="Unbanned!")
+            user = update.effective_user
             return (
                 f"<b>{html.escape(chat.title)}:</b>\n"
                 f"#UNBANNED\n"

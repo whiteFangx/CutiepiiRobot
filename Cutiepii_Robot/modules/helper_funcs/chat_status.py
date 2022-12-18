@@ -140,9 +140,7 @@ async def is_user_admin(update: Update,
             admin_list = [x.user.id for x in chat_admins]
             ADMIN_CACHE[chat.id] = admin_list
 
-            if user_id in admin_list:
-                return True
-            return False
+            return user_id in admin_list
 
 
 def is_user_ban_protected(update: Update,

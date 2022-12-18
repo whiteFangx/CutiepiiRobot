@@ -147,5 +147,4 @@ async def user_can_purge(user_id: int, message):
         return True
 
     perms = await telethn.get_permissions(message.chat_id, user_id)
-    status = perms.delete_messages
-    return status 
+    return perms.delete_messages 

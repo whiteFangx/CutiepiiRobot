@@ -109,5 +109,4 @@ async def alpha_to_int(user_id_alphabet: str) -> int:
     for i in user_id_alphabet:
         index = alphabet.index(i)
         user_id += str(index)
-    user_id = int(user_id)
-    return user_id
+    return int(user_id)

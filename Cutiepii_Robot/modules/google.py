@@ -281,7 +281,7 @@ async def apk(e):
             "div", "Vpfmgd").findNext("div", "vU6FJ p63iDd").a["href"])
         app_icon = (results[0].findNext("div", "Vpfmgd").findNext(
             "div", "uzcko").img["data-src"])
-        app_details = f"<a href={app_icon}" + "'>📲&#8203;</a>"
+        app_details = f"<a href={app_icon}'>📲&#8203;</a>"
         app_details += f" <b>{app_name}</b>"
         app_details += ("\n\n<code>Developer :</code> <a href=" +
                         app_dev_link + "'>" + app_dev + "</a>")

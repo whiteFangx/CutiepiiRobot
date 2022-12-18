@@ -186,16 +186,13 @@ async def set_sticker(update: Update,
         stk_set = msg.reply_to_message.sticker.set_name
         await bot.set_chat_sticker_set(chat.id, stk_set)
         await msg.reply_text(
-            f"<b>{user.first_name}</b> changed the group stickers set."
-            if not msg.sender_chat else "Group stickers set has been changed.",
-            parse_mode=ParseMode.HTML)
+            "Group stickers set has been changed."
+            if msg.sender_chat
+            else f"<b>{user.first_name}</b> changed the group stickers set.",
+            parse_mode=ParseMode.HTML,
+        )
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#ADMIN\nChat sticker set changed\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}")
-        return log_message
-
+        return f"<b>{html.escape(chat.title)}:</b>\n#ADMIN\nChat sticker set changed\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
     except BadRequest as e:
         # https://github.com/el0xren/tgbot/blob/773220202ea0b20137ccdd833dd97f10d0e54b83/tg_bot/modules/admin.py#L297
         if e.message == 'Participants_too_few':
@@ -237,15 +234,12 @@ async def setchatpic(update: Update,
 
         await bot.set_chat_photo(chat.id, image_data)
         await msg.reply_text(
-            f"<b>{user.first_name}</b> changed the group photo."
-            if not msg.sender_chat else "Group photo has been changed.",
-            parse_mode=ParseMode.HTML)
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#ADMIN\nChat photo changed\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}")
-        return log_message
-
+            "Group photo has been changed."
+            if msg.sender_chat
+            else f"<b>{user.first_name}</b> changed the group photo.",
+            parse_mode=ParseMode.HTML,
+        )
+        return f"<b>{html.escape(chat.title)}:</b>\n#ADMIN\nChat photo changed\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
     except BadRequest as e:
         await msg.reply_text("An Error occurred:\n" + str(e))
         return ''
@@ -264,15 +258,12 @@ async def rmchatpic(update: Update, context: CallbackContext) -> str:
     try:
         await bot.delete_chat_photo(chat.id)
         await msg.reply_text(
-            f"<b>{user.first_name}</b> deleted the group photo."
-            if not msg.sender_chat else "Group photo has been deleted.",
-            parse_mode=ParseMode.HTML)
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#ADMIN\nChat photo removed\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}")
-        return log_message
-
+            "Group photo has been deleted."
+            if msg.sender_chat
+            else f"<b>{user.first_name}</b> deleted the group photo.",
+            parse_mode=ParseMode.HTML,
+        )
+        return f"<b>{html.escape(chat.title)}:</b>\n#ADMIN\nChat photo removed\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
     except BadRequest as e:
         await msg.reply_text("An Error occurred:\n" + str(e))
         return ''
@@ -288,9 +279,7 @@ async def set_desc(update: Update, context: CallbackContext) -> str:
     msg = update.effective_message
     user = update.effective_user
 
-    args = context.args
-
-    if args:
+    if args := context.args:
         title = "  ".join(args)
 
     if msg.reply_to_message:
@@ -309,17 +298,13 @@ async def set_desc(update: Update, context: CallbackContext) -> str:
                 "Description longer than 255 characters, Truncating it to 255 characters!"
             )
         await msg.reply_text(
-            f"<b>{user.first_name}</b> changed the group description.to:\n<b>{title[:255]}</b>"
-            if not msg.sender_chat else
-            f"Group description has been changed.to:\n<b>{title[:255]}</b>",
-            parse_mode=ParseMode.HTML)
+            f"Group description has been changed.to:\n<b>{title[:255]}</b>"
+            if msg.sender_chat
+            else f"<b>{user.first_name}</b> changed the group description.to:\n<b>{title[:255]}</b>",
+            parse_mode=ParseMode.HTML,
+        )
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#ADMIN\nChat description changed\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}")
-        return log_message
-
+        return f"<b>{html.escape(chat.title)}:</b>\n#ADMIN\nChat description changed\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
     except BadRequest as e:
         await msg.reply_text("An Error occurred:\n" + str(e))
         return ''
@@ -336,9 +321,7 @@ async def setchat_title(update: Update,
     msg = update.effective_message
     user = update.effective_user
 
-    args = context.args
-
-    if args:
+    if args := context.args:
         title = "  ".join(args)
 
     if msg.reply_to_message:
@@ -357,17 +340,13 @@ async def setchat_title(update: Update,
                 "Title longer than 255 characters, Truncating it to 255 characters!"
             )
         await msg.reply_text(
-            f"<b>{user.first_name}</b> changed the group title.to:\n<b>{title[:255]}</b>"
-            if not msg.sender_chat else
-            f"Group title has been changed.to:\n<b>{title[:255]}</b>",
-            parse_mode=ParseMode.HTML)
+            f"Group title has been changed.to:\n<b>{title[:255]}</b>"
+            if msg.sender_chat
+            else f"<b>{user.first_name}</b> changed the group title.to:\n<b>{title[:255]}</b>",
+            parse_mode=ParseMode.HTML,
+        )
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#ADMIN\nChat title changed\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}")
-        return log_message
-
+        return f"<b>{html.escape(chat.title)}:</b>\n#ADMIN\nChat title changed\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
     except BadRequest as e:
         await msg.reply_text("An Error occurred:\n" + str(e))
         return ''
@@ -458,7 +437,7 @@ async def promoteanon(update: Update,
     try:
         user_member = await chat.get_member(user_id)
     except Exception as e:
-        await message.reply_text("Error:\n`{}`".format(e))
+        await message.reply_text(f"Error:\n`{e}`")
         return
 
     if user_member.status == "creator":
@@ -523,15 +502,7 @@ async def promoteanon(update: Update,
             await message.reply_text("An error occurred while promoting.")
         return
 
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#PROMOTED\n"
-        f"Anonymous\n"
-        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-        f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-    )
-
-    return log_message
+    return f"<b>{html.escape(chat.title)}:</b>\n#PROMOTED\nAnonymous\n<b>Admin:</b> {mention_html(user.id, user.first_name)}\n<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
 
 
 @connection_status
@@ -976,7 +947,7 @@ async def middemote(update: Update,
             "This person CREATED the chat, how would I middemote them?")
         return
 
-    if not user_member.status == "administrator":
+    if user_member.status != "administrator":
         await update.effective_message.reply_text(
             "Can't middemote what wasn't promoted!")
         return
@@ -1012,14 +983,7 @@ async def middemote(update: Update,
         with contextlib.suppress(KeyError):
             ADMIN_CACHE.pop(update.effective_chat.id)
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#MIDDEMOTED\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-            f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-        )
-
-        return log_message
+        return f"<b>{html.escape(chat.title)}:</b>\n#MIDDEMOTED\n<b>Admin:</b> {mention_html(user.id, user.first_name)}\n<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
     except BadRequest:
         await message.reply_text(
             "Could not demote. I might not be admin, or the admin status was appointed by another"
@@ -1084,22 +1048,11 @@ async def demote(update: Update,
         )
         await bot.sendMessage(
             chat.id,
-            "<b>{}</b> was demoted{}.".format(
-                user_member.user.first_name or user_id,
-                f' by <b>{message.from_user.first_name}</b>'
-                if not message.sender_chat else ''),
+            f"<b>{user_member.user.first_name or user_id}</b> was demoted{'' if message.sender_chat else f' by <b>{message.from_user.first_name}</b>'}.",
             parse_mode=ParseMode.HTML,
         )
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#DEMOTED\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-            f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-        )
-
-        return log_message
-
+        return f"<b>{html.escape(chat.title)}:</b>\n#DEMOTED\n<b>Admin:</b> {mention_html(user.id, user.first_name)}\n<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
     except BadRequest as e:
         await message.reply_text(f"Could not demote!\n{str(e)}")
         return
@@ -1130,7 +1083,7 @@ async def demoteanon(update: Update,
     try:
         user_member = chat.get_member(user_id)
     except Exception as e:
-        await message.reply_text("Error:\n`{}`".format(e))
+        await message.reply_text(f"Error:\n`{e}`")
         return
 
     if user_member.status == "creator" and user_id == user.id:
@@ -1193,16 +1146,7 @@ async def demoteanon(update: Update,
             parse_mode=ParseMode.HTML,
         )
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#DEMOTED\n"
-            f"Non anonymous\n"
-            f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-            f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
-        )
-
-        return log_message
-
+        return f"<b>{html.escape(chat.title)}:</b>\n#DEMOTED\nNon anonymous\n<b>Admin:</b> {mention_html(user.id, user.first_name)}\n<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
     except BadRequest as e:
         await message.reply_text(f"Could not demote!\n{str(e)}")
         return
@@ -1309,12 +1253,16 @@ async def pin(update: Update, context: CallbackContext) -> str:
         await msg.reply_text("Reply a message to pin it!")
         return
 
-    is_silent = True
-    if len(args) >= 1:
-        is_silent = (args[0].lower() != "notify" or args[0].lower() == "loud"
-                     or args[0].lower() == "violent")
-
     if prev_message and is_group:
+        is_silent = (
+            (
+                args[0].lower() != "notify"
+                or args[0].lower() == "loud"
+                or args[0].lower() == "violent"
+            )
+            if len(args) >= 1
+            else True
+        )
         try:
             await bot.pinChatMessage(chat.id,
                                      prev_message.message_id,
@@ -1334,13 +1282,7 @@ async def pin(update: Update, context: CallbackContext) -> str:
             if excp.message != "Chat_not_modified":
                 raise
 
-        log_message = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#PINNED\n"
-            f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}"
-        )
-
-        return log_message
+        return f"<b>{html.escape(chat.title)}:</b>\n#PINNED\n<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}"
 
 
 @bot_admin_check(AdminPerms.CAN_PIN_MESSAGES)
@@ -1354,8 +1296,11 @@ async def unpin(update: Update, context: CallbackContext) -> None:
     msg_id = msg.reply_to_message.message_id if msg.reply_to_message else msg.message_id
     unpinner = chat.get_member(user.id)
 
-    if (not (unpinner.can_pin_messages or unpinner.status == "creator")
-            and user.id not in SUDO_USERS):
+    if (
+        not unpinner.can_pin_messages
+        and unpinner.status != "creator"
+        and user.id not in SUDO_USERS
+    ):
         await update.effective_message.reply_text(
             "You don't have the necessary rights to do that!")
         return
@@ -1396,12 +1341,7 @@ async def unpin(update: Update, context: CallbackContext) -> None:
             else:
                 raise
 
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#MESSAGE-UNPINNED-SUCCESSFULLY\n"
-        f"<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}")
-
-    return log_message
+    return f"<b>{html.escape(chat.title)}:</b>\n#MESSAGE-UNPINNED-SUCCESSFULLY\n<b>Admin:</b> {mention_html(user.id, html.escape(user.first_name))}"
 
 
 @bot_admin_check(AdminPerms.CAN_PIN_MESSAGES)
@@ -1606,8 +1546,7 @@ async def permanent_pin_set(update: Update,
                 else:
                     old_pin = f"https://t.me/c/{str(chat.id)[4:]}/{get_permapin}"
                 text_maker += "\nTo disable cleanlinked send: `/cleanlinked off`"
-                text_maker += "\n\n[The permanent pinned message is here]({})".format(
-                    old_pin)
+                text_maker += f"\n\n[The permanent pinned message is here]({old_pin})"
             await context.bot.send_message(chat_id,
                                            text_maker,
                                            parse_mode=ParseMode.MARKDOWN_V2)
@@ -1649,8 +1588,7 @@ async def permanent_pin_set(update: Update,
                 else:
                     old_pin = f"https://t.me/c/{str(chat.id)[4:]}/{get_permapin}"
                 text_maker += "\nTo disable cleanlinked send: `/cleanlinked off`"
-                text_maker += "\n\n[The permanent pinned message is here]({})".format(
-                    old_pin)
+                text_maker += f"\n\n[The permanent pinned message is here]({old_pin})"
             await context.bot.send_message(chat_id,
                                            text_maker,
                                            parse_mode=ParseMode.MARKDOWN_V2)
@@ -1662,9 +1600,7 @@ async def permanent_pin_set(update: Update,
         sql.set_permapin(chat.id, prev_message)
         await context.bot.send_message(chat_id,
                                        "Cleanlinked successfully set!")
-        return "<b>{}:</b>" \
-               "\n#PERMANENT_PIN" \
-               "\n<b>Admin:</b> {}".format(html.escape(chat.title), mention_html(user.id, user.first_name))
+        return f"<b>{html.escape(chat.title)}:</b>\n#PERMANENT_PIN\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
 
     return ""
 
@@ -1709,9 +1645,9 @@ async def permanent_pin(update: Update,
                 LOGGER.debug(old_pin)
             await context.bot.send_message(
                 chat.id,
-                "*Cleanlinked error:*\nI can't pin messages here!\nMake sure I'm an admin and can pin messages.\n\nClean linked has been disabled, [The old permanent pinned message is here]({})"
-                .format(old_pin),
-                parse_mode=ParseMode.MARKDOWN_V2)
+                f"*Cleanlinked error:*\nI can't pin messages here!\nMake sure I'm an admin and can pin messages.\n\nClean linked has been disabled, [The old permanent pinned message is here]({old_pin})",
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
             return
 
         if to_del:
@@ -1746,12 +1682,7 @@ async def unpinallbtn(update: Update,
         await query.message.edit_text(
             "Unpin of all pinned messages has been cancelled.")
         return
-    return ("<b>{}:</b>"
-            "\n#UNPINNEDALL"
-            "\n<b>Admin:</b> {}".format(
-                html.escape(chat.title),
-                mention_html(user.id, user.first_name),
-            ))
+    return f"<b>{html.escape(chat.title)}:</b>\n#UNPINNEDALL\n<b>Admin:</b> {mention_html(user.id, user.first_name)}"
 
 
 CUTIEPII_PTB.add_handler(

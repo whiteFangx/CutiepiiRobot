@@ -114,8 +114,8 @@ async def remind(update: Update, context: CallbackContext) -> None:
 @user_admin
 async def reminders(update: Update,
                     context: CallbackContext) -> None:
-    chat = update.effective_chat
     msg = update.effective_message
+    chat = update.effective_chat
     chat.title = "your private chat" if chat.type == "private" else chat.title
     reminders = sql.get_reminds_in_chat(chat.id)
     if len(reminders) < 1:
@@ -124,15 +124,7 @@ async def reminders(update: Update,
     text = f"Reminders in {chat.title} are:\n"
     for reminder in reminders:
         user = await context.bot.get_chat(reminder.user_id)
-        text += (
-            "\n➛ {}\n  <b>By</b>: {}\n  <b>Time left</b>: {}\n  <b>Time stamp</b>: <code>{}</code>"
-        ).format(
-            reminder.remind_message,
-            f"@{user.username}" if user.username else mention_html(
-                user.id, user.first_name),
-            get_readable_time(reminder.time_seconds - round(time.time())),
-            reminder.time_seconds,
-        )
+        text += f'\n➛ {reminder.remind_message}\n  <b>By</b>: {f"@{user.username}" if user.username else mention_html(user.id, user.first_name)}\n  <b>Time left</b>: {get_readable_time(reminder.time_seconds - round(time.time()))}\n  <b>Time stamp</b>: <code>{reminder.time_seconds}</code>'
 
     text += "\n\n<b>Note</b>: You can clear a particular reminder with its time stamp."
     if len(text) > 4096:

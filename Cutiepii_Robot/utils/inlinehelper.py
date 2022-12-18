@@ -63,16 +63,15 @@ async def _netcat(host, port, content):
     s.sendall(content.encode())
     s.shutdown(socket.SHUT_WR)
     while True:
-        data = s.recv(4096).decode("utf-8").strip("\n\x00")
-        if not data:
+        if data := s.recv(4096).decode("utf-8").strip("\n\x00"):
+            return data
+        else:
             break
-        return data
     s.close()
 
 
 async def paste(content):
-    link = await _netcat("ezup.dev", 9999, content)
-    return link
+    return await _netcat("ezup.dev", 9999, content)
 
 
 async def inline_help_func(__HELP__):
@@ -99,7 +98,7 @@ async def inline_help_func(__HELP__):
 
 async def alive_function(answers):
     buttons = InlineKeyboard(row_width=2)
-    bot_state = "Dead" if not await app.get_me() else "Alive"
+    bot_state = "Alive" if await app.get_me() else "Dead"
     # ubot_state = "Dead" if not await app2.get_me() else "Alive"
     buttons.add(
         InlineKeyboardButton("Main Bot",
@@ -138,13 +137,11 @@ async def webss(url):
     end_time = time()
     # m = await app.send_photo(LOG_GROUP_ID, photo=screenshot["url"])
     await screenshot.delete()
-    a = []
     pic = InlineQueryResultPhoto(
         photo_url=screenshot["url"],
         caption=(f"`{url}`\n__Took {round(end_time - start_time)} Seconds.__"),
     )
-    a.append(pic)
-    return a
+    return [pic]
 
 
 async def translate_func(answers, lang, tex):
@@ -346,15 +343,13 @@ async def shortify(url):
             data=payload) as resp:
         data = await resp.json()
     msg = data["link"]
-    a = []
     b = InlineQueryResultArticle(
         title="Link Shortened!",
         description=data["link"],
         input_message_content=InputTextMessageContent(
             msg, disable_web_page_preview=True),
     )
-    a.append(b)
-    return a
+    return [b]
 
 
 async def torrent_func(answers, text):
@@ -376,7 +371,7 @@ async def torrent_func(answers, text):
         size = i.size
         seeds = i.seeds
         leechs = i.leechs
-        upload_date = i.uploaded + " Ago"
+        upload_date = f"{i.uploaded} Ago"
         magnet = i.magnet
         caption = f"""
 **Title:** __{title}__

@@ -89,13 +89,12 @@ class CustomCommandHandler(tg.CommandHandler):
     def check_update(self, update):
         if not isinstance(update, Update) or not update.effective_message:
             return
-        message = update.effective_message
-
         try:
             user_id = update.effective_user.id
         except Exception:
             user_id = None
 
+        message = update.effective_message
         if message.text and len(message.text) > 1:
             fst_word = message.text.split(None, 1)[0]
             if len(fst_word) > 1 and any(
@@ -107,9 +106,9 @@ class CustomCommandHandler(tg.CommandHandler):
                     message._bot.username
                 )  # in case the command was sent without a username
 
-                if not (
-                    frozenset({command[0].lower()}) in self.commands
-                    and command[1].lower() == message._bot.username.lower()
+                if (
+                    frozenset({command[0].lower()}) not in self.commands
+                    or command[1].lower() != message._bot.username.lower()
                 ):
                     return None
 

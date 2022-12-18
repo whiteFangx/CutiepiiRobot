@@ -154,10 +154,10 @@ async def pip_install(update: Update,
 
 @dev_plus
 async def leave(update: Update, context: CallbackContext) -> None:
-    bot = context.bot
     if args := context.args:
         chat_id = str(args[0])
         leave_msg = " ".join(args[1:])
+        bot = context.bot
         try:
             await context.bot.send_message(chat_id, leave_msg)
             await bot.leave_chat(int(chat_id))

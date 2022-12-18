@@ -45,7 +45,7 @@ class StickersFilters(BASE):
         self.trigger = trigger
 
     def __repr__(self):
-        return "<Stickers filter '%s' for %s>" % (self.trigger, self.chat_id)
+        return f"<Stickers filter '{self.trigger}' for {self.chat_id}>"
 
     def __eq__(self, other):
         return (

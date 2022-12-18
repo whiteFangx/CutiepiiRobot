@@ -34,12 +34,29 @@ def replacer(text: str) -> str:
      .replace("\\{mention\\}", '{mention}').replace("\\{user\\}", '{user}').replace("\\{admin\\}", '{admin}') \
      .replace("\\{preview\\}", '{preview}').replace("\\{protect\\}", '{protect}')
 
-    text = text.replace("\*", "*").replace("\[", "[").replace("\]", "]").replace("\(", "(").replace("\)", ")") \
-     .replace("\+", "+").replace("\|", "|").replace("\{", "{").replace("\}", "}").replace("\.", ".").replace("\-", "-") \
-     .replace("\'", "'").replace("\_", "_").replace("\~", "~").replace("\`", "`").replace("\>", ">").replace("\#", "#") \
-     .replace("\-", "-").replace("\=", "=").replace("\!", "!").replace("\\\\", "\\")
-
-    return text
+    return (
+        text.replace("\*", "*")
+        .replace("\[", "[")
+        .replace("\]", "]")
+        .replace("\(", "(")
+        .replace("\)", ")")
+        .replace("\+", "+")
+        .replace("\|", "|")
+        .replace("\{", "{")
+        .replace("\}", "}")
+        .replace("\.", ".")
+        .replace("\-", "-")
+        .replace("\'", "'")
+        .replace("\_", "_")
+        .replace("\~", "~")
+        .replace("\`", "`")
+        .replace("\>", ">")
+        .replace("\#", "#")
+        .replace("\-", "-")
+        .replace("\=", "=")
+        .replace("\!", "!")
+        .replace("\\\\", "\\")
+    )
 
 
 def parser(

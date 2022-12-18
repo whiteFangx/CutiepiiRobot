@@ -522,9 +522,7 @@ async def settings_button(update: Update,
             chat_id = mod_match[1]
             module = mod_match[2]
             chat = await bot.get_chat(chat_id)
-            text = "*{}* has the following settings for the *{}* module:\n\n".format(
-                escape_markdown(chat.title), CHAT_SETTINGS[module].__mod_name__
-            ) + CHAT_SETTINGS[module].__chat_settings__(chat_id, user.id)
+            text = f"*{escape_markdown(chat.title)}* has the following settings for the *{CHAT_SETTINGS[module].__mod_name__}* module:\n\n{CHAT_SETTINGS[module].__chat_settings__(chat_id, user.id)}"
             try:
                 keyboard = CHAT_SETTINGS[module].__chat_settings_buttons__(
                     chat_id, user.id)
@@ -614,9 +612,7 @@ async def get_settings(update: Update,
 
 
 async def donate(update: Update, context: CallbackContext) -> None:
-    user = update.effective_message.from_user
     chat = update.effective_chat  # type: Optional[Chat]
-    bot = context.bot
     if chat.type == "private":
         await update.effective_message.reply_text(
             DONATE_STRING,
@@ -630,6 +626,8 @@ async def donate(update: Update, context: CallbackContext) -> None:
             )
 
     else:
+        user = update.effective_message.from_user
+        bot = context.bot
         try:
             await bot.send_message(
                 user.id,

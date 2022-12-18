@@ -45,9 +45,8 @@ async def _(event):
         return
     input_str = event.pattern_match.group(1)
     KkK = await event.reply("searching for the book...")
-    lin = "https://b-ok.cc/s/"
     text = input_str
-    link = lin + text
+    link = f"https://b-ok.cc/s/{text}"
     page = requests.get(link)
     soup = BeautifulSoup(page.content, "html.parser")
     f = open("book.txt", "w")

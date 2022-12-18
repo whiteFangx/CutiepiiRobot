@@ -81,9 +81,7 @@ def disable_chat_log(chat_id):
 def does_chat_log(chat_id):
     with LOG_SETTING_LOCK:
         d = SESSION.query(LoggerSettings).get(str(chat_id))
-        if not d:
-            return False
-        return d.setting
+        return d.setting if d else False
 
 
 

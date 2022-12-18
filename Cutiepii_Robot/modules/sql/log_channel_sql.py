@@ -107,8 +107,7 @@ def get_chat_setting(chat_id: int) -> typing.Optional[LogChannelSettings]:
 
 def set_chat_setting(setting: LogChannelSettings):
     with LOGS_INSERTION_LOCK:
-        res: LogChannelSettings = SESSION.query(LogChannelSettings).get(setting.chat_id)
-        if res:
+        if res := SESSION.query(LogChannelSettings).get(setting.chat_id):
             res.log_warn = setting.log_warn
             res.log_action = setting.log_action
             res.log_report = setting.log_report

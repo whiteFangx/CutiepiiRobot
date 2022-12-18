@@ -81,13 +81,7 @@ async def approve(update: Update, context: CallbackContext) -> None:
         f"will now be ignored by automated admin actions like locks, blocklists, and antiflood.",
         parse_mode=ParseMode.MARKDOWN,
     )
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#APPROVED\n"
-        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-        f"<b>User:</b> {mention_html(member.user.id, member.user.first_name)}")
-
-    return log_message
+    return f"<b>{html.escape(chat.title)}:</b>\n#APPROVED\n<b>Admin:</b> {mention_html(user.id, user.first_name)}\n<b>User:</b> {mention_html(member.user.id, member.user.first_name)}"
 
 
 @loggable
@@ -120,13 +114,7 @@ async def disapprove(update: Update,
     sql.disapprove(message.chat_id, user_id)
     await message.reply_text(
         f"{member.user['first_name']} is no longer approved in {chat_title}.")
-    log_message = (
-        f"<b>{html.escape(chat.title)}:</b>\n"
-        f"#UNAPPROVED\n"
-        f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-        f"<b>User:</b> {mention_html(member.user.id, member.user.first_name)}")
-
-    return log_message
+    return f"<b>{html.escape(chat.title)}:</b>\n#UNAPPROVED\n<b>Admin:</b> {mention_html(user.id, user.first_name)}\n<b>User:</b> {mention_html(member.user.id, member.user.first_name)}"
 
 
 @user_admin
@@ -198,9 +186,9 @@ async def unapproveall_btn(update: Update):
     chat = update.effective_chat
     message = update.effective_message
     member = chat.get_member(query.from_user.id)
-    chat_id = update.effective_chat.id
-    user_id = update.effective_message.from_user.id
     if query.data == "unapproveall_user":
+        chat_id = update.effective_chat.id
+        user_id = update.effective_message.from_user.id
         if member.status == "creator" or query.from_user.id in SUDO_USERS:
             approved_users = sql.list_approved(chat.id)
             users = [int(i.user_id) for i in approved_users]
